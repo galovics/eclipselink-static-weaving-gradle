@@ -1,0 +1,51 @@
+buildscript {
+    dependencies {
+        classpath 'org.eclipse.persistence:eclipselink:3.0.2'
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.6.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.arnoldgalovics.blog'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+compileJava.doLast {
+    def mainSS = sourceSets.main
+    def source = mainSS.java.classesDirectory.get()
+    copy {
+        from "src/main/resources/META-INF/"
+        into "${source}/META-INF/"
+    }
+    javaexec {
+        description = 'Performs EclipseLink static weaving of entity classes'
+        def target = source
+        main 'org.eclipse.persistence.tools.weaving.jpa.StaticWeave'
+        args '-persistenceinfo', source, '-classpath', configurations.runtimeClasspath, source, target
+        classpath configurations.runtimeClasspath
+    }
+    delete {
+        delete "${source}/META-INF/"
+    }
+}
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa') {
+        exclude group: 'org.hibernate'
+    }
+    implementation 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.10'
+    runtimeOnly 'com.h2database:h2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

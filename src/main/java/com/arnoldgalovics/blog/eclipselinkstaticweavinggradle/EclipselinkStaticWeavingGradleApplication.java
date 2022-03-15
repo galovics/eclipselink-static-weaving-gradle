@@ -10,11 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootApplication
 public class EclipselinkStaticWeavingGradleApplication implements CommandLineRunner {
-	public static final UUID ACTOR_ID = UUID.fromString("a6728ebd-e1be-4ba7-9738-cc45b8f0df43");
-
 	public static void main(String[] args) {
 		SpringApplication.run(EclipselinkStaticWeavingGradleApplication.class, args);
 	}
+
+	public static final UUID ACTOR_ID = UUID.fromString("a6728ebd-e1be-4ba7-9738-cc45b8f0df43");
 
 	@PersistenceContext
 	private EntityManager entityManager;
